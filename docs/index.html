@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Remote Kit - Smart Remote Config SDK</title>
+  <meta name="description" content="Remote Kit is a smart Remote Config SDK for Android applications, with a Node.js server, MongoDB database, admin portal, A/B testing insights, analytics and optimized server architecture." />
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        primaryColor: "#ffffff",
+        primaryTextColor: "#0f172a",
+        primaryBorderColor: "#2563eb",
+        lineColor: "#64748b",
+        secondaryColor: "#eff6ff",
+        tertiaryColor: "#f8fafc",
+        background: "#ffffff",
+        mainBkg: "#ffffff",
+        secondBkg: "#eff6ff",
+        tertiaryBkg: "#f8fafc",
+        textColor: "#0f172a",
+        nodeTextColor: "#0f172a",
+        clusterBkg: "#f8fafc",
+        clusterBorder: "#cbd5e1",
+        edgeLabelBackground: "#ffffff",
+        actorBkg: "#ffffff",
+        actorBorder: "#2563eb",
+        actorTextColor: "#0f172a",
+        actorLineColor: "#64748b",
+        signalColor: "#0f172a",
+        signalTextColor: "#0f172a",
+        noteBkgColor: "#fff7ed",
+        noteTextColor: "#7c2d12",
+        noteBorderColor: "#fdba74",
+        labelBoxBkgColor: "#ffffff",
+        labelBoxBorderColor: "#2563eb",
+        labelTextColor: "#0f172a",
+        loopTextColor: "#0f172a",
+        activationBkgColor: "#dbeafe",
+        activationBorderColor: "#2563eb",
+        sequenceNumberColor: "#ffffff"
+      }
+    });
+  </script>
+
+  <style>
+    :root {
+      --bg: #f6f8fc;
+      --surface: rgba(255, 255, 255, 0.86);
+      --surface-solid: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --soft: #eef2ff;
+      --line: #dbe3ef;
+      --primary: #2563eb;
+      --primary-2: #7c3aed;
+      --cyan: #0891b2;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --shadow-sm: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 24px 80px rgba(15, 23, 42, 0.12);
+      --shadow-glow: 0 24px 80px rgba(37, 99, 235, 0.22);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --code-bg: #0b1220;
+      --code-line: #1e293b;
+      --code-text: #dbeafe;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.14), transparent 34%),
+        radial-gradient(circle at 100% 0%, rgba(124, 58, 237, 0.14), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 34%, #eef3fb 100%);
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 26px 20px;
+      background: rgba(255, 255, 255, 0.78);
+      border-right: 1px solid rgba(203, 213, 225, 0.7);
+      backdrop-filter: blur(18px);
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 8px 24px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.22), transparent),
+        linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      margin: 0;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    .nav-section-title {
+      margin: 18px 10px 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #94a3b8;
+      font-weight: 900;
+    }
+
+    nav {
+      display: grid;
+      gap: 5px;
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 750;
+      transition: 0.18s ease;
+    }
+
+    nav a span {
+      width: 26px;
+      height: 26px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: #f1f5f9;
+      font-size: 13px;
+    }
+
+    nav a:hover {
+      background: #eff6ff;
+      color: var(--primary);
+      transform: translateX(2px);
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 74px 72px 50px;
+      border-bottom: 1px solid rgba(203, 213, 225, 0.65);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 18px 28px;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(124, 58, 237, 0.10)),
+        rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 38px;
+      box-shadow: var(--shadow-md);
+      z-index: -2;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 380px;
+      height: 380px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.22), transparent 64%);
+      z-index: -1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: #dbeafe;
+      border: 1px solid #bfdbfe;
+      font-weight: 900;
+      font-size: 13px;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.12);
+    }
+
+    .hero h2 {
+      max-width: 980px;
+      margin: 22px 0 22px;
+      font-size: clamp(44px, 6.2vw, 86px);
+      line-height: 0.92;
+      letter-spacing: -0.075em;
+      color: var(--ink);
+    }
+
+    .hero h2 .gradient-text {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-lead {
+      max-width: 890px;
+      margin: 0 0 28px;
+      color: #475569;
+      font-size: 20px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 26px 0 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 15px;
+      font-weight: 900;
+      border: 1px solid transparent;
+      transition: 0.18s ease;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.78);
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+      max-width: 950px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(203, 213, 225, 0.8);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .content {
+      padding: 46px 72px 90px;
+      max-width: 1280px;
+    }
+
+    section {
+      scroll-margin-top: 24px;
+      margin-bottom: 34px;
+    }
+
+    .section-head {
+      margin-bottom: 18px;
+    }
+
+    .section-head .label {
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 3.3vw, 48px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+    }
+
+    h3 {
+      margin: 26px 0 10px;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+    }
+
+    h4 {
+      margin: 18px 0 8px;
+      font-size: 17px;
+    }
+
+    p {
+      color: #475569;
+      margin-top: 0;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(203, 213, 225, 0.75);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(16px);
+    }
+
+    .subtle-card {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(203, 213, 225, 0.7);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .feature-card {
+      position: relative;
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px;
+      transition: 0.2s ease;
+    }
+
+    .feature-card::after {
+      content: "";
+      position: absolute;
+      right: -38px;
+      top: -38px;
+      width: 96px;
+      height: 96px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.08);
+      transition: 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: #bfdbfe;
+    }
+
+    .feature-card:hover::after {
+      transform: scale(1.35);
+    }
+
+
+    .svg-icon,
+    .feature-icon svg,
+    .eyebrow svg {
+      width: 19px;
+      height: 19px;
+      display: inline-block;
+      flex: 0 0 auto;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .feature-icon svg {
+      width: 23px;
+      height: 23px;
+    }
+
+    .eyebrow svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    nav a span svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #eff6ff, #ede9fe);
+      color: var(--primary);
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      margin: 0 0 8px;
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .media-box {
+      min-height: 230px;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.06), rgba(124, 58, 237, 0.06)),
+        #ffffff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 28px;
+      color: #475569;
+    }
+
+    .media-box strong {
+      color: var(--ink);
+    }
+
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .shot {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .shot-preview {
+      min-height: 180px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.24), transparent 28%),
+        radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.18), transparent 30%),
+        linear-gradient(135deg, #f8fafc, #e0ecff);
+      display: grid;
+      place-items: center;
+      color: #334155;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+
+    .shot p {
+      padding: 14px 16px;
+      margin: 0;
+      font-size: 14px;
+      color: #475569;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 13px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 950;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 0.9em;
+    }
+
+    pre {
+      position: relative;
+      margin: 14px 0 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent),
+        var(--code-bg);
+      color: var(--code-text);
+      border: 1px solid var(--code-line);
+      border-radius: 20px;
+      padding: 18px;
+      overflow-x: auto;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.14);
+      line-height: 1.55;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      font-size: 13px;
+    }
+
+    .diagram {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 24px;
+      padding: 22px;
+      overflow-x: auto;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6), var(--shadow-sm);
+    }
+
+    .diagram .mermaid {
+      background: #ffffff !important;
+      color: #0f172a !important;
+    }
+
+    .diagram svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .diagram svg text,
+    .diagram svg .label,
+    .diagram svg .nodeLabel,
+    .diagram svg .edgeLabel,
+    .diagram svg .actor,
+    .diagram svg .messageText,
+    .diagram svg .loopText,
+    .diagram svg .noteText {
+      fill: #0f172a !important;
+      color: #0f172a !important;
+      font-weight: 650 !important;
+    }
+
+    .diagram svg .node rect,
+    .diagram svg .node polygon,
+    .diagram svg .node circle,
+    .diagram svg .node ellipse {
+      fill: #ffffff !important;
+      stroke: #2563eb !important;
+      stroke-width: 2px !important;
+    }
+
+    .diagram svg .cluster rect {
+      fill: #f8fafc !important;
+      stroke: #cbd5e1 !important;
+    }
+
+    .diagram svg .edgePath path,
+    .diagram svg .flowchart-link,
+    .diagram svg .messageLine0,
+    .diagram svg .messageLine1 {
+      stroke: #475569 !important;
+      stroke-width: 2px !important;
+    }
+
+    .diagram svg .edgeLabel,
+    .diagram svg .labelBkg,
+    .diagram svg .edgeLabel rect {
+      background: #ffffff !important;
+      fill: #ffffff !important;
+      color: #0f172a !important;
+    }
+
+    .diagram svg .actor {
+      fill: #ffffff !important;
+      stroke: #2563eb !important;
+    }
+
+    .callout {
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .callout p {
+      color: #065f46;
+      margin: 0;
+    }
+
+    .callout strong {
+      color: #064e3b;
+    }
+
+    .warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .warning p {
+      color: #92400e;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+
+    .video-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: #0b1220;
+      box-shadow: var(--shadow-md);
+    }
+
+    .video-frame video {
+      display: block;
+      width: 100%;
+      max-height: 520px;
+      background: #0b1220;
+    }
+
+    .media-caption {
+      padding: 14px 18px;
+      background: #ffffff;
+      border-top: 1px solid var(--line);
+      color: #475569;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .real-shot {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+      transition: 0.2s ease;
+    }
+
+    .real-shot:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .real-shot img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+      background: #f8fafc;
+    }
+
+    .real-shot .image-fit-contain {
+      object-fit: contain;
+      padding: 12px;
+    }
+
+    .real-shot p {
+      padding: 14px 16px;
+      margin: 0;
+      font-size: 14px;
+      color: #475569;
+    }
+
+    .footer {
+      padding: 34px 72px;
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,0.8);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1100px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        display: grid;
+      }
+
+      .hero, .content, .footer {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .hero::before {
+        inset: 10px;
+      }
+
+      .hero-stats,
+      .cols-2,
+      .cols-3,
+      .cols-4,
+      .screenshot-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">RK</div>
+        <div>
+          <h1>Remote Kit</h1>
+          <p>Smart Remote Config SDK</p>
+        </div>
+      </div>
+
+      <div class="nav-section-title">Overview</div>
+      <nav>
+        <a href="#overview"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3V10.5Z"/></svg></span> Home</a>
+        <a href="#features"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5L12 2Z"/></svg></span> Features</a>
+        <a href="#demo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h11a2 2 0 0 1 2 2v1.5L21 7v10l-4-2.5V16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/></svg></span> Video & Screenshots</a>
+        <a href="#use-cases"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm2 17h4"/></svg></span> Use Cases</a>
+      </nav>
+
+      <div class="nav-section-title">Developer Docs</div>
+      <nav>
+        <a href="#get-started"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3c4 1 7 4 8 8l-5 5-4-4-4-4 5-5Z"/><path d="M8 8 4 9l-2 5 5-2m9 4-1 4-5 2 2-5"/><path d="M15 9h.01"/></svg></span> Get Started</a>
+        <a href="#implementation"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v5h2a3 3 0 1 1 0 6h-2v7H8v-5H6a3 3 0 1 1 0-6h2V3Z"/></svg></span> Implementation</a>
+        <a href="#sdk"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v4"/><path d="M7 6h10a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-6a4 4 0 0 1 4-4Z"/><path d="M8 12h.01M16 12h.01"/><path d="M9 16h6"/></svg></span> SDK</a>
+        <a href="#api"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v6m8-6v6"/><path d="M6 8h12v4a6 6 0 0 1-12 0V8Z"/><path d="M12 18v4"/></svg></span> API Docs</a>
+        <a href="#examples"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6"/><path d="M10 2v6l-5 9a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-9V2"/><path d="M7 16h10"/></svg></span> Examples</a>
+      </nav>
+
+      <div class="nav-section-title">Architecture</div>
+      <nav>
+        <a href="#architecture"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-6h6v6"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg></span> System Architecture</a>
+        <a href="#database"><span><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></span> Database & ERD</a>
+        <a href="#states"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 16h5v5"/><path d="M3 12A9 9 0 0 1 18.5 5.7L21 8"/><path d="M21 8h-5V3"/></svg></span> State Diagrams</a>
+        <a href="#efficiency"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 10-13h-7l1-7Z"/></svg></span> Server Efficiency</a>
+        <a href="#future"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18l3 3 6.7-6.7a4 4 0 0 0 5-5l-2.8 2.8-3-3 2.8-2.8Z"/></svg></span> Future Improvements</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero" id="overview">
+        <div class="eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 10-13h-7l1-7Z"/></svg> Remote configuration for Android apps</div>
+        <h2>Update app behavior <span class="gradient-text">without shipping a new version.</span></h2>
+        <p class="hero-lead">
+          Remote Kit is a lightweight Remote Config platform for Android applications. It includes an Android SDK,
+          a web admin portal, a Node.js server, MongoDB storage, targeting rules, A/B testing insights, analytics,
+          audit logs and optimized server architecture.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn primary" href="#get-started">Start Integration</a>
+          <a class="btn secondary" href="#architecture">View Architecture</a>
+          <a class="btn secondary" href="#efficiency">Server Efficiency</a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <strong>SDK</strong>
+            <span>Android Integration</span>
+          </div>
+          <div class="stat">
+            <strong>REST</strong>
+            <span>Clean JSON API</span>
+          </div>
+          <div class="stat">
+            <strong>MongoDB</strong>
+            <span>Indexed Storage</span>
+          </div>
+          <div class="stat">
+            <strong>Cache</strong>
+            <span>Optimized Server</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section id="features">
+          <div class="section-head">
+            <div class="label">Product capabilities</div>
+            <h2>Feature set</h2>
+          </div>
+
+          <div class="card">
+            <p>
+              Remote Kit allows developers and product teams to remotely manage UI values, feature flags,
+              country-based targeting and A/B testing insights from a central dashboard.
+            </p>
+
+            <div class="grid cols-3">
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7m0-4V3"/><path d="M12 21v-9m0-4V3"/><path d="M20 21v-5m0-4V3"/><path d="M2 14h4M10 8h4M18 16h4"/></svg></div>
+                <h3>Remote Config</h3>
+                <p>Manage dynamic configuration keys with String, Number, Boolean and JSON values.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v4"/><path d="M7 6h10a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-6a4 4 0 0 1 4-4Z"/><path d="M8 12h.01M16 12h.01"/><path d="M9 16h6"/></svg></div>
+                <h3>Automatic Android Apply</h3>
+                <p>The SDK scans the screen and applies remote values to matching Android view IDs.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6"/><path d="M10 2v6l-5 9a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-9V2"/><path d="M7 16h10"/></svg></div>
+                <h3>A/B Testing Insights</h3>
+                <p>Split users into variants, collect clicks and show the leading variant in the dashboard.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 5 5 4-8 4 8 5-5-2 12H5L3 7Z"/><path d="M5 21h14"/></svg></div>
+                <h3>Leading Variant Indicator</h3>
+                <p>The dashboard highlights the variant with the highest click count using a crown icon.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg></div>
+                <h3>Country Targeting</h3>
+                <p>Return specific values for selected countries while keeping a global default value.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></div>
+                <h3>Scheduled Rollout</h3>
+                <p>Schedule values to become active at a future date and time.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg></div>
+                <h3>Analytics Dashboard</h3>
+                <p>Show conversions, click trend over time, activity heatmap and live device data.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></div>
+                <h3>Audit Logs</h3>
+                <p>Track changes and restore previous values using rollback.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 10-13h-7l1-7Z"/></svg></div>
+                <h3>Optimized Backend</h3>
+                <p>Use in-memory cache, bulk writes, daily counters and MongoDB indexes.</p>
+              </div>
+            </div>
+
+            <div class="callout warning" style="margin-top: 18px;">
+              <p>
+                <strong>Important:</strong> The dashboard can show which A/B variant is leading, but this project does
+                not automatically apply the winner by button click. Applying a winner is listed as a possible future improvement.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="demo">
+          <div class="section-head">
+            <div class="label">Presentation assets</div>
+            <h2>Video & screenshots</h2>
+          </div>
+
+          <div class="card">
+            <p>
+              This section includes the real project demo video and the main screenshots from the portal and Android demo flow.
+            </p>
+
+            <h3>Demo video</h3>
+            <div class="video-frame">
+              <video controls preload="metadata">
+                <source src="./assets/demo-video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div class="media-caption">
+                Demo video path: <code>docs/assets/demo-video.mp4</code>
+              </div>
+            </div>
+
+            <h3>Product screenshots</h3>
+            <div class="screenshot-grid">
+              <div class="real-shot">
+                <img src="./assets/images/login.png" alt="Remote Kit login screen" data-base="./assets/images/login" />
+                <p><strong>Login</strong> - Project API key access screen.</p>
+              </div>
+
+              <div class="real-shot">
+                <img src="./assets/images/main.png" alt="Remote Kit main configuration dashboard" data-base="./assets/images/main" />
+                <p><strong>Main</strong> - Configuration Variables dashboard with remote keys.</p>
+              </div>
+
+              <div class="real-shot">
+                <img src="./assets/images/edit.png" alt="Remote Kit edit configuration modal" data-base="./assets/images/edit" />
+                <p><strong>Edit</strong> - Advanced targeting modal with country targeting, A/B settings and scheduling.</p>
+              </div>
+
+              <div class="real-shot">
+                <img src="./assets/images/Analytics.png" alt="Remote Kit analytics dashboard" data-base="./assets/images/Analytics" />
+                <p><strong>Analytics</strong> - Device health, conversions, click trend and activity heatmap.</p>
+              </div>
+
+              <div class="real-shot">
+                <img src="./assets/images/diagram.png" alt="Remote Kit architecture diagram" data-base="./assets/images/diagram" class="image-fit-contain" />
+                <p><strong>Diagram</strong> - System architecture and communication flow.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const extensions = [".png", ".jpg", ".jpeg", ".webp", ".PNG", ".JPG", ".JPEG", ".WEBP"];
+
+            document.querySelectorAll("img[data-base]").forEach(function (img) {
+              let index = 0;
+              const base = img.getAttribute("data-base");
+
+              img.onerror = function () {
+                index += 1;
+                if (index < extensions.length) {
+                  img.src = base + extensions[index];
+                } else {
+                  img.onerror = null;
+                  img.alt = "Image file was not found. Please verify the file name and extension.";
+                  img.style.objectFit = "contain";
+                  img.style.padding = "32px";
+                }
+              };
+
+              img.src = base + extensions[index];
+            });
+          });
+        </script>
+
+        <section id="use-cases">
+          <div class="section-head">
+            <div class="label">Where it fits</div>
+            <h2>Apps that can use Remote Kit</h2>
+          </div>
+
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>App Type</th>
+                  <th>Remote Kit Usage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>E-commerce</td><td>Change CTA text, sale banners, button colors and checkout messages.</td></tr>
+                <tr><td>Food ordering</td><td>Control promotions, pickup messages and seasonal campaigns.</td></tr>
+                <tr><td>Gaming</td><td>Enable beta features, balance UI experiments and launch events.</td></tr>
+                <tr><td>News</td><td>Change headlines, subscription prompts and layout flags.</td></tr>
+                <tr><td>Education</td><td>Test onboarding copy, course banners and feature availability.</td></tr>
+                <tr><td>Enterprise</td><td>Control internal feature flags per environment or user group.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="get-started">
+          <div class="section-head">
+            <div class="label">Setup</div>
+            <h2>Get Started</h2>
+          </div>
+
+          <div class="card">
+            <div class="grid cols-2">
+              <div class="subtle-card">
+                <h3>1. Run the server</h3>
+                <pre><code>cd server
+npm install
+node server.js</code></pre>
+              </div>
+
+              <div class="subtle-card">
+                <h3>2. Run the portal</h3>
+                <pre><code>cd portal
+npm install
+npm run dev</code></pre>
+              </div>
+            </div>
+
+            <h3>3. Open portal</h3>
+            <pre><code>http://localhost:3000</code></pre>
+
+            <h3>4. Enter project API key</h3>
+            <pre><code>demo-project</code></pre>
+
+            <h3>5. Connect Android app</h3>
+            <pre><code>baseUrl = "http://YOUR_LOCAL_IP:3001"</code></pre>
+
+            <div class="callout warning" style="margin-top: 16px;">
+              <p>
+                <strong>Physical Android device:</strong> use your computer's local network IP.
+                Do not use <code>localhost</code> from a physical device.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="implementation">
+          <div class="section-head">
+            <div class="label">Developer integration</div>
+            <h2>Implementation</h2>
+          </div>
+
+          <div class="card">
+            <h3>Android SDK initialization</h3>
+            <pre><code>RemoteConfig.init(
+    context = applicationContext,
+    apiKey = "demo-project",
+    baseUrl = "http://192.168.1.115:3001",
+    country = "IL",
+    listener = object : RemoteConfig.Listener {
+        override fun onReady() {
+            runOnUiThread {
+                RemoteConfig.autoApply(rootLayout)
+                RemoteConfig.autoRegisterViews(rootLayout)
+            }
+        }
+
+        override fun onError(message: String) {
+            Log.e("RemoteKit", message)
+        }
+    }
+)</code></pre>
+
+            <h3>Auto apply mapping</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Remote Key</th>
+                  <th>Android Effect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>btnPreOrder_text</code></td><td>Updates button text.</td></tr>
+                <tr><td><code>btnPreOrder_bgColor</code></td><td>Updates button background color.</td></tr>
+                <tr><td><code>btnPreOrder_textColor</code></td><td>Updates button text color.</td></tr>
+                <tr><td><code>btnPreOrder_textSize</code></td><td>Updates button text size.</td></tr>
+                <tr><td><code>betaSection_isVisible</code></td><td>Changes view visibility.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="sdk">
+          <div class="section-head">
+            <div class="label">SDK docs</div>
+            <h2>Main SDK functions</h2>
+          </div>
+
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Function</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>RemoteConfig.init</code></td><td>Initializes the SDK and fetches remote configuration.</td></tr>
+                <tr><td><code>RemoteConfig.refresh</code></td><td>Fetches latest config values again.</td></tr>
+                <tr><td><code>RemoteConfig.autoApply</code></td><td>Scans view hierarchy and applies remote values.</td></tr>
+                <tr><td><code>RemoteConfig.autoRegisterViews</code></td><td>Registers detected UI elements in the portal.</td></tr>
+              </tbody>
+            </table>
+
+            <h3>Recommended refresh throttle</h3>
+            <pre><code>private var lastRefreshTime = 0L
+private val refreshCooldownMs = 30_000L
+
+override fun onResume() {
+    super.onResume()
+
+    val now = System.currentTimeMillis()
+    if (now - lastRefreshTime &lt; refreshCooldownMs) return
+
+    lastRefreshTime = now
+    RemoteConfig.refresh(listener = listener)
+}</code></pre>
+
+            <h3>Recommended auto-register usage</h3>
+            <pre><code>if (BuildConfig.DEBUG) {
+    RemoteConfig.autoRegisterViews(rootLayout)
+}</code></pre>
+          </div>
+        </section>
+
+        <section id="api">
+          <div class="section-head">
+            <div class="label">REST interface</div>
+            <h2>API Docs</h2>
+          </div>
+
+          <div class="card">
+            <h3>Public SDK endpoints</h3>
+            <table>
+              <thead>
+                <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>GET</td><td><code>/api/v1/config</code></td><td>Fetch remote configs for SDK.</td></tr>
+                <tr><td>POST</td><td><code>/api/analytics/click</code></td><td>Track click analytics.</td></tr>
+                <tr><td>POST</td><td><code>/api/config/auto-register</code></td><td>Register UI elements from Android screen.</td></tr>
+              </tbody>
+            </table>
+
+            <h3>Private portal endpoints</h3>
+            <table>
+              <thead>
+                <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>GET</td><td><code>/api/config/portal/:projectId</code></td><td>Get all configs for portal.</td></tr>
+                <tr><td>POST</td><td><code>/api/config/update</code></td><td>Publish updated configs.</td></tr>
+                <tr><td>DELETE</td><td><code>/api/config</code></td><td>Delete config key.</td></tr>
+                <tr><td>GET</td><td><code>/api/analytics/:projectId</code></td><td>Get total analytics.</td></tr>
+                <tr><td>GET</td><td><code>/api/analytics/time-series/:projectId</code></td><td>Get daily analytics and heatmap.</td></tr>
+                <tr><td>GET</td><td><code>/api/health/:projectId</code></td><td>Get device health stats.</td></tr>
+                <tr><td>GET</td><td><code>/api/devices/:projectId</code></td><td>Get active devices.</td></tr>
+                <tr><td>GET</td><td><code>/api/logs/:projectId</code></td><td>Get audit logs.</td></tr>
+                <tr><td>POST</td><td><code>/api/config/rollback</code></td><td>Rollback a config value from audit log.</td></tr>
+              </tbody>
+            </table>
+
+            <div class="callout warning" style="margin-top: 16px;">
+              <p>
+                <strong>A/B note:</strong> the dashboard shows the leading variant, but this version does not include
+                a user-facing one-click "apply winner" flow.
+              </p>
+            </div>
+
+            <h3>JSON snippets</h3>
+
+            <h4>Fetch config response</h4>
+            <pre><code>{
+  "configs": {
+    "btnPreOrder_text": "Buy Now",
+    "btnPreOrder_bgColor": "#6366f1",
+    "betaSection_isVisible": true
+  }
+}</code></pre>
+
+            <h4>Track click request</h4>
+            <pre><code>{
+  "projectId": "demo-project",
+  "elementId": "btnPreOrder",
+  "variantValue": "Buy Now"
+}</code></pre>
+
+            <h4>Publish config request</h4>
+            <pre><code>{
+  "configsToSave": [
+    {
+      "projectId": "demo-project",
+      "keyName": "btnPreOrder_text",
+      "dataType": "String",
+      "defaultValue": "Buy Now"
+    }
+  ]
+}</code></pre>
+
+            <h4>Time series response</h4>
+            <pre><code>{
+  "success": true,
+  "timeSeries": [
+    {
+      "_id": {
+        "date": "2026-07-01",
+        "element": "btnPreOrder",
+        "variantValue": "Buy Now"
+      },
+      "totalClicks": 12
+    }
+  ]
+}</code></pre>
+          </div>
+        </section>
+
+        <section id="architecture">
+          <div class="section-head">
+            <div class="label">Architecture</div>
+            <h2>System architecture</h2>
+          </div>
+
+          <div class="card">
+            <p>
+              The system contains an Android demo app, SDK, admin portal, Express server, in-memory cache and MongoDB database.
+            </p>
+
+            <div class="diagram">
+              <pre class="mermaid">
+flowchart LR
+    AndroidApp["Android Demo App"] --> SDK["Remote Kit SDK"]
+    SDK -->|"GET Config"| Server["Node.js Express Server"]
+    SDK -->|"Track Clicks"| Server
+    SDK -->|"Auto Register Views"| Server
+
+    Portal["Admin Web Portal"] -->|"Manage Configs"| Server
+    Portal -->|"View Analytics"| Server
+    Portal -->|"View Logs"| Server
+    Portal -->|"Rollback"| Server
+
+    Server --> Cache["In-Memory Cache"]
+    Server --> Mongo[("MongoDB")]
+
+    Mongo --> Configs["Configs"]
+    Mongo --> Analytics["Analytics"]
+    Mongo --> Daily["Daily Analytics"]
+    Mongo --> Devices["Device Sync"]
+    Mongo --> Logs["Audit Logs"]
+              </pre>
+            </div>
+
+            <h3>SDK network sequence</h3>
+            <div class="diagram">
+              <pre class="mermaid">
+sequenceDiagram
+    participant App as Android App
+    participant SDK as SDK
+    participant API as Server
+    participant Cache as Cache
+    participant DB as MongoDB
+
+    App->>SDK: RemoteConfig.init()
+    SDK->>API: GET /api/v1/config
+
+    API->>Cache: Check project cache
+
+    alt Cache hit
+        Cache-->>API: Config list
+    else Cache miss
+        API->>DB: ConfigModel.find(projectId)
+        DB-->>API: Config list
+        API->>Cache: Store configs
+    end
+
+    API->>API: Apply schedule rules
+    API->>API: Apply country targeting
+    API->>API: Assign A/B group
+    API-->>SDK: Final configs JSON
+    SDK->>App: autoApply(rootLayout)
+              </pre>
+            </div>
+
+            <h3>Publish sequence</h3>
+            <div class="diagram">
+              <pre class="mermaid">
+sequenceDiagram
+    participant Admin as Portal Admin
+    participant Portal as Web Portal
+    participant API as Server
+    participant DB as MongoDB
+    participant Cache as Cache
+
+    Admin->>Portal: Edit config value
+    Portal->>API: POST /api/config/update
+    API->>DB: Load old configs
+    API->>DB: bulkWrite new configs
+    API->>DB: insertMany audit logs
+    API->>Cache: Delete project cache
+    API-->>Portal: success true
+              </pre>
+            </div>
+
+            <h3>Click analytics sequence</h3>
+            <div class="diagram">
+              <pre class="mermaid">
+sequenceDiagram
+    participant User as User
+    participant App as Android App
+    participant SDK as SDK
+    participant API as Server
+    participant DB as MongoDB
+
+    User->>App: Click button
+    App->>SDK: Track click
+    SDK->>API: POST /api/analytics/click
+    API->>DB: $inc total click counter
+    API->>DB: $inc daily click counter
+    API-->>SDK: success true
+              </pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="database">
+          <div class="section-head">
+            <div class="label">Data model</div>
+            <h2>Database & ERD</h2>
+          </div>
+
+          <div class="card">
+            <h3>Main collections</h3>
+            <table>
+              <thead>
+                <tr><th>Collection</th><th>Purpose</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>configs</code></td><td>Remote config keys and targeting rules.</td></tr>
+                <tr><td><code>analytics</code></td><td>Total click counters by element and variant.</td></tr>
+                <tr><td><code>dailyanalytics</code></td><td>Daily click counters for trend charts.</td></tr>
+                <tr><td><code>devicesyncs</code></td><td>Latest sync state per device.</td></tr>
+                <tr><td><code>auditlogs</code></td><td>Change history and rollback data.</td></tr>
+              </tbody>
+            </table>
+
+            <h3>ERD</h3>
+            <div class="diagram">
+              <pre class="mermaid">
+erDiagram
+    PROJECT ||--o{ CONFIG : contains
+    PROJECT ||--o{ ANALYTICS : tracks
+    PROJECT ||--o{ DAILY_ANALYTICS : aggregates
+    PROJECT ||--o{ DEVICE_SYNC : monitors
+    PROJECT ||--o{ AUDIT_LOG : records
+
+    PROJECT {
+        string projectId
+    }
+
+    CONFIG {
+        string projectId
+        string keyName
+        string dataType
+        mixed defaultValue
+        object targetingRules
+        date scheduledTime
+    }
+
+    ANALYTICS {
+        string projectId
+        string elementId
+        string variantValue
+        number clickCount
+        date lastClicked
+    }
+
+    DAILY_ANALYTICS {
+        string projectId
+        string elementId
+        string variantValue
+        string dateKey
+        number clickCount
+        date updatedAt
+    }
+
+    DEVICE_SYNC {
+        string projectId
+        string deviceId
+        string country
+        object abGroups
+        date lastSync
+    }
+
+    AUDIT_LOG {
+        string projectId
+        string action
+        string keyName
+        string changes
+        mixed previousValue
+        string dataType
+        string user
+        date timestamp
+    }
+              </pre>
+            </div>
+
+            <h3>Database table examples</h3>
+
+            <h4>Config document</h4>
+            <pre><code>{
+  "projectId": "demo-project",
+  "keyName": "btnPreOrder_text",
+  "dataType": "String",
+  "defaultValue": "Pre Order",
+  "targetingRules": {
+    "country": "IL",
+    "countryValue": "הזמן עכשיו",
+    "abTestEnabled": true,
+    "abTestPercentage": 50,
+    "abTestVariantValue": "Buy Now"
+  }
+}</code></pre>
+
+            <h4>Daily analytics document</h4>
+            <pre><code>{
+  "projectId": "demo-project",
+  "elementId": "btnPreOrder",
+  "variantValue": "Buy Now",
+  "dateKey": "2026-07-01",
+  "clickCount": 8
+}</code></pre>
+
+            <h3>Important indexes</h3>
+            <pre><code>configSchema.index({ projectId: 1, keyName: 1 });
+
+analyticsSchema.index(
+  { projectId: 1, elementId: 1, variantValue: 1 },
+  { unique: true }
+);
+
+analyticsSchema.index({ projectId: 1, lastClicked: -1 });
+
+dailyAnalyticsSchema.index(
+  { projectId: 1, elementId: 1, variantValue: 1, dateKey: 1 },
+  { unique: true }
+);
+
+dailyAnalyticsSchema.index({
+  projectId: 1,
+  dateKey: 1,
+  elementId: 1,
+  variantValue: 1
+});
+
+deviceSyncSchema.index({ projectId: 1, lastSync: -1 });
+auditLogSchema.index({ projectId: 1, timestamp: -1 });</code></pre>
+          </div>
+        </section>
+
+        <section id="states">
+          <div class="section-head">
+            <div class="label">Lifecycle</div>
+            <h2>State diagrams</h2>
+          </div>
+
+          <div class="card">
+            <h3>Config lifecycle</h3>
+            <div class="diagram">
+              <pre class="mermaid">
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Review: Admin edits value
+    Review --> Published: Admin publishes
+    Published --> Cached: SDK request loads config
+    Cached --> Invalidated: Admin changes config
+    Invalidated --> Published: Next SDK request reloads DB
+    Published --> RolledBack: Admin clicks rollback
+    RolledBack --> Invalidated: Cache cleared
+              </pre>
+            </div>
+
+            <h3>A/B testing insight lifecycle</h3>
+            <div class="diagram">
+              <pre class="mermaid">
+stateDiagram-v2
+    [*] --> Disabled
+    Disabled --> Active: Admin enables A/B test
+    Active --> AssigningUsers: SDK requests config
+    AssigningUsers --> CollectingClicks: Users interact
+    CollectingClicks --> Analyzing: Dashboard compares variants
+    Analyzing --> LeadingVariantShown: Crown marks highest click count
+    LeadingVariantShown --> Active: Continue collecting data
+              </pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="examples">
+          <div class="section-head">
+            <div class="label">Usage scenarios</div>
+            <h2>Examples</h2>
+          </div>
+
+          <div class="card">
+            <div class="grid cols-2">
+              <div class="subtle-card">
+                <h3>Change button text</h3>
+                <pre><code>{
+  "keyName": "btnPreOrder_text",
+  "dataType": "String",
+  "defaultValue": "Buy Now"
+}</code></pre>
+              </div>
+
+              <div class="subtle-card">
+                <h3>Change button color</h3>
+                <pre><code>{
+  "keyName": "btnPreOrder_bgColor",
+  "dataType": "String",
+  "defaultValue": "#6366f1"
+}</code></pre>
+              </div>
+
+              <div class="subtle-card">
+                <h3>Toggle view visibility</h3>
+                <pre><code>{
+  "keyName": "betaSection_isVisible",
+  "dataType": "Boolean",
+  "defaultValue": true
+}</code></pre>
+              </div>
+
+              <div class="subtle-card">
+                <h3>Country targeting</h3>
+                <pre><code>{
+  "defaultValue": "Buy Now",
+  "targetingRules": {
+    "country": "IL",
+    "countryValue": "הזמן עכשיו"
+  }
+}</code></pre>
+              </div>
+
+              <div class="subtle-card">
+                <h3>A/B testing</h3>
+                <pre><code>{
+  "defaultValue": "Pre Order",
+  "targetingRules": {
+    "abTestEnabled": true,
+    "abTestPercentage": 50,
+    "abTestVariantValue": "Buy Now"
+  }
+}</code></pre>
+              </div>
+
+              <div class="subtle-card">
+                <h3>Track click</h3>
+                <pre><code>{
+  "projectId": "demo-project",
+  "elementId": "btnPreOrder",
+  "variantValue": "Buy Now"
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="efficiency">
+          <div class="section-head">
+            <div class="label">Performance</div>
+            <h2>Server efficiency</h2>
+          </div>
+
+          <div class="card">
+            <p>
+              The server is optimized for frequent SDK reads and dashboard analytics. The goal is to avoid unnecessary
+              MongoDB reads and reduce write pressure.
+            </p>
+
+            <div class="grid cols-3">
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7c0-2.2 3.6-4 8-4s8 1.8 8 4-3.6 4-8 4-8-1.8-8-4Z"/><path d="M4 7v5c0 2.2 3.6 4 8 4s8-1.8 8-4V7"/><path d="M4 12v5c0 2.2 3.6 4 8 4s8-1.8 8-4v-5"/></svg></div>
+                <h3>In-Memory Cache</h3>
+                <p>After the first project request, configs are served from memory.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 16h5v5"/><path d="M3 12A9 9 0 0 1 18.5 5.7L21 8"/><path d="M21 8h-5V3"/></svg></div>
+                <h3>Project Invalidation</h3>
+                <p>Only the changed project cache is cleared after publish, delete or rollback.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="M3 7v10l9 5 9-5V7"/><path d="M12 12v10"/></svg></div>
+                <h3>Bulk Device Writes</h3>
+                <p>Device sync updates are buffered and flushed with MongoDB bulkWrite.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg></div>
+                <h3>Daily Counters</h3>
+                <p>Clicks are stored as daily counters instead of raw event documents.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></div>
+                <h3>Compound Indexes</h3>
+                <p>Indexes match dashboard queries such as projectId + timestamp and projectId + lastSync.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4C10 4 4 10 4 20c10 0 16-6 16-16Z"/><path d="M4 20 15 9"/></svg></div>
+                <h3>Lean Reads</h3>
+                <p>Read-only MongoDB queries can return lightweight plain JavaScript objects.</p>
+              </div>
+            </div>
+
+            <h3>Defense explanation</h3>
+            <div class="callout">
+              <p>
+                <strong>Efficiency summary:</strong> SDK config reads are served from cache after the first request.
+                Device sync updates are buffered and saved using bulkWrite. Analytics are stored as counters instead
+                of raw events. MongoDB indexes were added according to the dashboard query patterns.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="future">
+          <div class="section-head">
+            <div class="label">Roadmap</div>
+            <h2>Future improvements</h2>
+          </div>
+
+          <div class="card">
+            <ul>
+              <li>Add admin authentication with JWT.</li>
+              <li>Separate public SDK API key from private admin permissions.</li>
+              <li>Move server code into routes, services and models.</li>
+              <li>Add rate limiting for SDK endpoints.</li>
+              <li>Add Redis for distributed cache if multiple server instances are used.</li>
+              <li>Add one aggregated dashboard endpoint: <code>GET /api/dashboard/:projectId</code>.</li>
+              <li>Run <code>autoRegisterViews</code> only in debug mode or when the UI hash changes.</li>
+              <li>Add local SDK cache for offline support.</li>
+              <li>Add an optional manual "Apply leading variant" action for A/B tests.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <footer class="footer">
+        Remote Kit - Academic project for Afeka Tel Aviv Academic College of Engineering Copyright 2026
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

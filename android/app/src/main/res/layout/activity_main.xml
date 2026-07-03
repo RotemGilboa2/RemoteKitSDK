@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootFrame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundapp"
+    android:layoutDirection="ltr">
+
+    <ScrollView
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Top Bar -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="76dp"
+                android:background="#090D15"
+                android:paddingStart="22dp"
+                android:paddingEnd="22dp">
+
+                <TextView
+                    android:id="@+id/tvLogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:letterSpacing="0.08"
+                    android:text="Remote Kit"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="28dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@id/tvLogo"
+                    android:background="@drawable/bg_sdk_badge"
+                    android:gravity="center"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="SDK"
+                    android:textColor="#00E5FF"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:alpha="0.9"
+                    android:contentDescription="Menu"
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    android:tint="#FFFFFF" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/mainContentLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="112dp"
+                android:visibility="visible">
+
+                <!-- Hero Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="28dp"
+                    android:paddingTop="34dp"
+                    android:paddingEnd="28dp"
+                    android:paddingBottom="34dp">
+
+                    <TextView
+                        android:id="@+id/tvMainHeading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="18dp"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="-8dp"
+                        android:text="SHATTER\nTHE\nSIMULATION"
+                        android:textColor="#FFFFFF"
+                        android:textSize="42sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvSubHeading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="32dp"
+                        android:lineSpacingExtra="5dp"
+                        android:text="Experience the next evolution of squad-based combat. Zero latency. Infinite strategy."
+                        android:textColor="#B4BAC8"
+                        android:textSize="17sp" />
+
+                    <!-- CTA Card -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_cta_card"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvDiscountBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_discount_badge"
+                            android:elevation="8dp"
+                            android:paddingStart="12dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="12dp"
+                            android:paddingBottom="5dp"
+                            android:text="-20% OFF"
+                            android:textColor="#071014"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/btnPreOrder"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:layout_below="@id/tvDiscountBadge"
+                            android:layout_marginTop="12dp"
+                            android:background="@drawable/bg_primary_button"
+                            android:elevation="8dp"
+                            android:stateListAnimator="@null"
+                            android:text="PRE-ORDER NOW"
+                            android:textColor="#071014"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <!-- Beta Section -->
+                <LinearLayout
+                    android:id="@+id/betaSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="28dp"
+                    android:background="@drawable/bg_beta_section"
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="JOIN THE\nMULTIPLAYER BETA"
+                        android:textColor="#FFFFFF"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="22dp"
+                        android:gravity="center"
+                        android:lineSpacingExtra="3dp"
+                        android:text="Feature unlocked remotely. Join the beta without updating the app."
+                        android:textColor="#8F98AA"
+                        android:textSize="14sp" />
+
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="58dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@drawable/bg_input"
+                        android:enabled="false"
+                        android:hint="ENTER_IDENTIFICATION_EMAIL"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:singleLine="true"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#5D6678"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/btnInfiltrate"
+                        android:layout_width="match_parent"
+                        android:layout_height="58dp"
+                        android:background="@drawable/bg_secondary_button"
+                        android:stateListAnimator="@null"
+                        android:text="INFILTRATE"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Footer -->
+                <LinearLayout
+                    android:id="@+id/footerSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="36dp">
+
+                    <TextView
+                        android:id="@+id/tvFooterText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.08"
+                        android:text="©2024 NEURAL OVERDRIVE INTERACTIVE"
+                        android:textColor="#3B4252"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Maintenance Layout -->
+            <LinearLayout
+                android:id="@+id/maintenanceLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SYSTEM_CRITICAL_FAILURE"
+                    android:textColor="#FF2A5F"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Floating Live Status + Banner -->
+    <LinearLayout
+        android:id="@+id/floatingStatusContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginTop="88dp"
+        android:elevation="14dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!-- Live Status -->
+        <LinearLayout
+            android:id="@+id/floatingStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_floating_status"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="18dp">
+
+            <View
+                android:id="@+id/liveDot"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_marginEnd="9dp"
+                android:background="@drawable/bg_live_dot" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.08"
+                android:text="LIVE TRANSMISSION"
+                android:textColor="#00E5FF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Notification Banner under status -->
+        <TextView
+            android:id="@+id/tvBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="#071923"
+            android:gravity="center"
+            android:letterSpacing="0.16"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="REMOTE CONFIG UPDATED: MULTIPLAYER SERVERS ONLINE"
+            android:textColor="#00E5FF"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</FrameLayout>
