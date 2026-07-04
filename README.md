@@ -30,11 +30,11 @@ The system includes:
 * Optimized server cache and database indexing
 
 ---
----
 
 ## Table of Contents
 
 * [Demo Video](#demo-video)
+* [Documentation](#documentation)
 * [Screenshots](#screenshots)
 * [Features](#features)
   * [Remote Config Management](#remote-config-management)
@@ -83,12 +83,28 @@ The system includes:
 * [License](#license)
 
 ---
----
 
 ## Demo Video
+<p align="center">
+  <a href="https://youtu.be/Yzva4QEaMMQ" target="_blank">
+    <img
+      src="https://img.shields.io/badge/YouTube-Watch_Demo-red?style=for-the-badge&logo=youtube&logoColor=white"
+      alt="Watch Demo on YouTube"
+    />
+  </a>
+</p>
 
-[![Watch Demo on YouTube](https://img.shields.io/badge/YouTube-Watch_Demo-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/Yzva4QEaMMQ)
+---
 
+## Documentation
+
+The full project documentation is available on the GitHub Pages website.
+
+<p align="center">
+  <a href="https://rotemgilboa2.github.io/RemoteConfigSDK/">
+    <img src="https://img.shields.io/badge/Open%20Documentation-Remote%20Kit-2563EB?style=for-the-badge" alt="Open Documentation" />
+  </a>
+</p>
 
 ---
 
