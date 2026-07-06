@@ -86,7 +86,7 @@ The system includes:
 
 ## Demo Video
 <p align="center">
-  <a href="https://youtu.be/Yzva4QEaMMQ" target="_blank">
+  <a href="https://youtu.be/UvbgN24d448" target="_blank">
     <img
       src="https://img.shields.io/badge/YouTube-Watch_Demo-red?style=for-the-badge&logo=youtube&logoColor=white"
       alt="Watch Demo on YouTube"
