@@ -101,7 +101,7 @@ The system includes:
 The full project documentation is available on the GitHub Pages website.
 
 <p align="center">
-  <a href="https://rotemgilboa2.github.io/RemoteConfigSDK/">
+  <a href="https://rotemgilboa2.github.io/RemoteKitSDK/">
     <img src="https://img.shields.io/badge/Open%20Documentation-Remote%20Kit-2563EB?style=for-the-badge" alt="Open Documentation" />
   </a>
 </p>
